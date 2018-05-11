@@ -1,0 +1,92 @@
+imp FD20170731A6/FD20170731A6@orcl file='' full=y ignore=y
+
+
+--创建表空间
+Create tablespace FD20170731A6
+Datafile 'D:\oradata\FD20170731A6.dbf' size 2000M
+EXTENT MANAGEMENT LOCAL 
+SEGMENT SPACE MANAGEMENT  AUTO;
+
+--查询表空间是否为自增长
+SELECT T.TABLESPACE_NAME,D.FILE_NAME,  
+D.AUTOEXTENSIBLE,D.BYTES,D.MAXBYTES,D.STATUS  
+FROM DBA_TABLESPACES T,DBA_DATA_FILES D  
+WHERE T.TABLESPACE_NAME =D.TABLESPACE_NAME  
+ORDER BY TABLESPACE_NAME,FILE_NAME;  
+
+--修改表空间为自增张
+ALTER DATABASE   
+    DATAFILE 'D:\oradata\FD20170731A6.dbf' AUTOEXTEND   
+ON NEXT 1000M MAXSIZE UNLIMITED;/*每次增长大小及最大尺寸为无限*/
+
+--扩大表空间的数据文件
+ALTER TABLESPACE TBS_HSFA ADD DATAFILE
+'F:\oradata\TBS_HSFA01.dbf' SIZE 2000M
+AUTOEXTEND ON NEXT 500M MAXSIZE UNLIMITED;
+
+--建用户
+Create user FD20170731A6 Identified by FD20170731A6
+Default tablespace FD20170731A6 /*用户所在的表空间 */
+Temporary tablespace temp;
+Grant connect,resource to FD20170731A6;
+Grant create table,create view to FD20170731A6;
+grant create synonym to FD20170731A6;
+Grant debug connect session to FD20170731A6;
+Grant create Job to FD20170731A6;
+Grant SELECT_CATALOG_ROLE to FD20170731A6;
+revoke unlimited tablespace from FD20170731A6;
+alter user FD20170731A6 quota 0 on system;
+alter user FD20170731A6 quota 0 on users;
+alter user FD20170731A6 quota unlimited on FD20170731A6;
+grant dba to FD20170731A6;
+alter system set deferred_segment_creation=false scope=both;
+
+
+
+
+
+
+
+
+
+--开启基金业务菜单
+update TSYS_MODULE a set a.l_void='0' where a.vc_code='300314';
+commit;
+
+--更新“新股发行改革生效日期”参数
+update txtcs a set a.vc_csz='20160101' where a.vc_csdm='JYQS_XGGGSXRQ';
+commit;
+
+--更新"上海FAST行情切换日期"参数
+update txtcs a set a.vc_csz='20160101' where a.vc_csdm='JYQS_FASTHQQHRQ';
+commit;
+
+--更新"sjsgf停用日期"参数
+update txtcs a set a.vc_csz='20160101' where a.vc_csdm='JYQS_SJSGFTYRQ';
+commit;
+
+
+--更新"深交所证券/行情信息切换为5代日期"参数
+update txtcs a set a.vc_csz='20160101' where a.vc_csdm='JYQS_SJS5DQYRQ_ZQHQ';
+commit;
+
+--更新"深交所(综合)回报信息切换为5代日期"参数
+update txtcs a set a.vc_csz='20160101' where a.vc_csdm='JYQS_SJS5DQYRQ';
+commit;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
